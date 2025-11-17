@@ -1,8 +1,6 @@
 <?php
-// Load data sekolah aman
 $data = require __DIR__ . "/secure-data/data_sekolah_secure.php";
 
-// Urutkan berdasarkan nama sekolah (alfabet)
 $sorted = [];
 foreach ($data as $id => $row) {
     $sorted[$row['nama_sekolah']] = ["id" => $id, "pendamping" => $row['pendamping']];
@@ -24,20 +22,17 @@ ksort($sorted);
 
 <div class="school-list">
 
-<?php
-// Loop sekolah (UI tetap sama)
-foreach ($sorted as $school_name => $info):
-    $schoolId = $info['id'];
-    $pendamping_list = $info['pendamping'];
-?>
+<?php foreach ($sorted as $school_name => $info): ?>
+    <?php
+        $schoolId = $info['id'];
+        $pendamping_list = $info['pendamping'];
+    ?>
     <div class='school-item'>
         <h3><?= htmlspecialchars($school_name) ?></h3>
         <ul class='pendamping-list'>
         <?php foreach ($pendamping_list as $pendampingId => $pendamping): ?>
             <li>
                 <strong>Pendamping:</strong> <?= htmlspecialchars($pendamping['nama']) ?>
-                
-                <!-- Tidak ada kode verifikasi di HTML! -->
                 <button class='download-btn'
                     onclick='openModal(<?= json_encode($schoolId) ?>, <?= json_encode($pendampingId) ?>, <?= json_encode($pendamping["nama"]) ?>)'
                 >
@@ -47,12 +42,10 @@ foreach ($sorted as $school_name => $info):
         <?php endforeach; ?>
         </ul>
     </div>
-
 <?php endforeach; ?>
 
 </div>
 
-<!-- The Modal -->
 <div id="myModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
@@ -60,7 +53,6 @@ foreach ($sorted as $school_name => $info):
         <p id="modal-pendamping-name"></p>
         <p>Masukkan 4 digit terakhir nomor telepon pendamping untuk mengunduh PDF.</p>
 
-        <!-- Form menuju download.php -->
         <form id="verificationForm" method="POST" action="download.php">
             <input type="hidden" id="schoolIdInput" name="school_id">
             <input type="hidden" id="pendampingIdInput" name="pendamping_id">
@@ -97,7 +89,6 @@ foreach ($sorted as $school_name => $info):
         if (event.target == modal) closeModal();
     };
 
-    // Client-side validation ONLY (UI), verifikasi tetap dilakukan server-side
     document.getElementById("verificationForm").addEventListener("submit", function(event) {
         const code = document.getElementById("verificationCode").value.trim();
         const errorDiv = document.getElementById("errorMessage");
